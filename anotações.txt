@@ -1,0 +1,122 @@
+Estrutura:
+
+src:
+    app: 
+        context: contextos da aplicação
+        hooks: hooks customizados da aplicação
+
+    components: Componentes simples sem regra de negocio 
+    domain:
+        entities: arquivos de iterfaces que representam entidades da aplicação. Ex: User (acho que poderiam ser classes tb)
+        repositories: interfaces que representam o contrato entre entidades e os repositories. Ex: UserRepository
+        useCases: caso de uso entre entidades e repositorios, aqui ficam as classes que implementam todos os metodos estabelecidos no contrato. Ex: CreateUser (cria o usuario em QUALQUER UserRepository)
+    presentation: Componentes mais complexos, com regras de negocio, formados por um conjunto de components
+    pages: estrutura de paginas que agrupam um ou varios componentes da camada de presentation. A pagina deve ter uma rota no router (quem ta no router vai pra essa pasta)
+    router: arquivo tsx (nesse proj e o exportado a variavel do react-router-dom p/ montar as querys, com next esse cara nao seria necessario acho)
+
+A reorganização dos componentes em camadas distintas, como 'Apresentação' e 'Componentes Básicos', melhora a clareza e a legibilidade do código, 
+facilita a localização e compreensão dos componentes, e promove a reutilização e consistência visual, apoiando a escalabilidade do projeto.
+
+
+Essa abordagem permite que os desenvolvedores trabalhem de forma mais eficiente, reduzindo o tempo necessário para implementar novas funcionalidades e corrigir bugs, além de facilitar a integração de novos membros na equipe.
+
+------------------------
+
+No Vite, as variáveis de ambiente são acessadas pelo objeto import.meta.env. 
+Esse objeto é preenchido durante a build, ou seja, as variáveis não mudam mais depois de compiladas. 
+Ele já traz algumas variáveis internas prontinhas para uso, como:
+
+import.meta.env.MODE: diz em qual modo a aplicação está rodando;
+import.meta.env.BASE_URL: é o endereço base do servidor da aplicação;
+import.meta.env.PROD e import.meta.env.DEV: flags booleanas para saber se estamos no ambiente de produção ou de desenvolvimento;
+import.meta.env.SSR: informa se a aplicação está rodando no servidor;
+
+O Vite carrega variáveis de ambiente nos arquivos .env e podem ser da seguinte maneira:
+
+.env - vai em qualquer situação;
+.env.local - só no ambiente local (e ignorado no git);
+.env.[mode] - só no modo especificado, por exemplo, .env.production;
+.env.[mode].local - no modo específico e só localmente.
+As variáveis são expostas ao código-fonte do cliente através do import.meta.env, como strings. 
+Contudo, para evitar vazamento acidental, apenas as variáveis de ambiente pré-fixadas com VITE_ são expostas ao código processado pelo Vite. 
+Digamos que você tenha no seu .env algo como:
+
+VITE_APP_TITLE=Minha Aplicação Maravilhosa
+
+Se você fizer um console.log vai conseguir exibir no console do navegador o valor dessa variável:
+
+console.log(import.meta.env.VITE_APP_TITLE); // "Minha Aplicação Maravilhosa"
+
+Contudo, se você não usar o VITE_ no início do nome da variável, ela será retornada como undefined:
+
+APP_TITLE=Minha Aplicação Maravilhosa
+console.log(import.meta.env.APP_TITLE); // undefined
+
+Assim, com o poder do import.meta.env, você consegue configurar suas variáveis com segurança e organização no Vite.
+
+documentação vite: https://vite.dev/guide/env-and-mode
+
+-----------------------------
+
+useEffect:
+
+Você já deve ter feito algum código em React que precisou monitorar mudanças, como buscar dados de uma API quando o componente carrega, ou talvez registrar um evento quando o usuário faz alguma ação. Para isso, o useEffect é seu grande amigo!
+
+O useEffect é um hook que permite que você realize efeitos colaterais em componentes funcionais do React, como consultas a APIs, assinaturas de eventos, manipulação de dados e até mesmo limpeza de recursos. 
+Basicamente, sempre que precisar executar algum código assim que o componente montar ou atualizar, o useEffect é o que você procura!
+
+Estrutura do useEffect
+A estrutura do useEffect recebe duas partes principais:
+
+Função de efeito: que é o que você quer executar. Pode ser qualquer coisa, desde uma consulta a uma API até a atualização do título da página;
+Array de dependências (opcional): aqui, você lista as variáveis que, quando mudarem, vão disparar o efeito novamente. E, se você quer que o efeito só rode uma vez quando o componente montar, é só deixar esse array vazio.
+Um exemplo prático para entender a estrutura:
+
+        import React, { useEffect, useState } from 'react';
+
+        function ExemploComUseEffect() {
+        const [dados, setDados] = useState(null);
+
+        useEffect(() => {
+            // Função de efeito: busca de dados
+            fetch('https://api.example.com/data')
+            .then(response => response.json())
+            .then(data => setDados(data));
+
+            // Opcional: função de limpeza
+            return () => {
+            console.log("Limpando efeitos!");
+            };
+        }, []); // Array de dependências vazio, executa apenas uma vez
+
+        return (
+            <div>
+            <h1>Dados da API</h1>
+            <pre>{JSON.stringify(dados, null, 2)}</pre>
+            </div>
+        );
+        }
+
+Onde e quando usar o useEffect?
+O useEffect é ideal quando você precisa:
+
+Buscar dados de uma API ao montar um componente;
+Configurar assinaturas de eventos (como adicionar um ouvinte para redimensionar a janela) e, claro, removê-los na desmontagem;
+Sincronizar estados externos com o React, como alterações vindas de formulários.
+Cuidados ao usar o useEffect
+Um ponto importante é que o useEffect pode gerar efeitos inesperados se você não planejar bem as dependências. 
+Alterar o array de dependências ou omiti-lo pode fazer o efeito rodar várias vezes, então cuidado para não acabar com uma chamada infinita que pode travar seu app!
+
+Caso queira explorar mais sobre esse hook do React, você pode conferir o artigo Entenda de vez o hook useEffect e Transforme Seu Código React:
+Artigo: https://marcosviniciosneves.medium.com/entenda-de-vez-o-hook-useeffect-e-transforme-seu-c%C3%B3digo-react-39245296ef7e
+
+-----------------------------
+
+Como listar as categorias de livros disponíveis em um banco, como: ficção, não-ficção, ciência, etc.
+
+Criar uma interface iBookCategory.ts com propriedades ID e name, um repositório iBookCategoryRepository.ts 
+com um método listAll que retorna uma promessa de um array de iBookCategory, 
+e uma classe ListBookCategory que injeta o repositório e usa um método execute para chamar listAll e retornar todas as categorias de livros.
+
+Isso organiza a listagem de categorias de forma estruturada e eficiente, 
+permitindo que a Buscante ofereça uma navegação mais rica e organizada para seus usuários.

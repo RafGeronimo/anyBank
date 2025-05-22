@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { Card as BaseCard } from "./components/Card";
+import { Card as BaseCard } from "../components/Card";
 import styled from "styled-components";
 
 const Card = styled(BaseCard)`
@@ -9,12 +9,11 @@ const Card = styled(BaseCard)`
 `;
 
 const AuthLayout = () => {
+  return (
+    <Card>
+      <Outlet />
+    </Card>
+  );
+};
 
-    return (
-        <Card>
-            <Outlet />
-        </Card>
-    )
-}
-
-export default AuthLayout
+export default AuthLayout;

@@ -1,5 +1,5 @@
 import { User } from "../../domain/entities/User";
-import { UserRepository } from "../../domain/repositores/UserRepository";
+import { UserRepository } from "../../domain/repositories/UserRepository";
 import { supabase } from "./config";
 
 export default class UserSupabaseRepository implements UserRepository {
