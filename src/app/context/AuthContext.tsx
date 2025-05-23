@@ -12,11 +12,15 @@ export const AuthContext = createContext<AuthContext | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      console.log("getSession", session);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+        console.log("getSession", session);
+      })
+      .finally(() => setLoading(false));
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -37,5 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  return <AuthContext.Provider value={{ logout, session, login }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ logout, session, login }}>{loading ? "loading..." : children}</AuthContext.Provider>
+  );
 };

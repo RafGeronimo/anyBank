@@ -8,11 +8,17 @@ src:
     components: Componentes simples sem regra de negocio 
     domain:
         entities: arquivos de iterfaces que representam entidades da aplicação. Ex: User (acho que poderiam ser classes tb)
-        repositories: interfaces que representam o contrato entre entidades e os repositories. Ex: UserRepository
-        useCases: caso de uso entre entidades e repositorios, aqui ficam as classes que implementam todos os metodos estabelecidos no contrato. Ex: CreateUser (cria o usuario em QUALQUER UserRepository)
+        repositories: arquivos de interfaces que representam o contrato entre entidades e os repositories. Ex: UserRepository
+        useCases: caso de uso entre entidades e repositorios, aqui ficam as CLASSES que implementam todos os metodos estabelecidos no contrato. 
+                Um useCase sempre recebe um repository no construtor para implementar o método que resolve o caso de uso;
+                Ex: CreateUser (cria o usuario em QUALQUER UserRepository)
     presentation: Componentes mais complexos, com regras de negocio, formados por um conjunto de components
     pages: estrutura de paginas que agrupam um ou varios componentes da camada de presentation. A pagina deve ter uma rota no router (quem ta no router vai pra essa pasta)
     router: arquivo tsx (nesse proj e o exportado a variavel do react-router-dom p/ montar as querys, com next esse cara nao seria necessario acho)
+    infra:
+        [repositorioNome]: Para cada repositorio utilizado aqui ficam seus arquivos de config.tse types.ts (se houver); 
+        Tambem aqui sao direcionados os arquivos de CLASSE que implementam as interfaces do folder "repositories". 
+        Ex: UserSupabaseRepository -> classe que implementa o contrado UserRepository
 
 A reorganização dos componentes em camadas distintas, como 'Apresentação' e 'Componentes Básicos', melhora a clareza e a legibilidade do código, 
 facilita a localização e compreensão dos componentes, e promove a reutilização e consistência visual, apoiando a escalabilidade do projeto.
